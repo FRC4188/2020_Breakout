@@ -16,4 +16,8 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    public static final Color kBLUE = ColorMatch.makeColor(0.0, 0.255, 0.255);
+    public static final Color kRED = ColorMatch.makeColor(0.255, 0.0, 0.0);
+    public static final Color kYELLOW = ColorMatch.makeColor(0.255, 0.255, 0.0);
+    public static final Color kGREEN = ColorMatch.makeColor(0.0, 0.255, 0.0);
 }
