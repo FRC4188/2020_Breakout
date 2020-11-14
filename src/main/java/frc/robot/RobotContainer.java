@@ -12,6 +12,11 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Magazine;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.WheelSpinner;
 import frc.robot.utils.CspController;
 import frc.robot.utils.ButtonBox;
 import frc.robot.commands.drive.ManualDrive;
@@ -26,6 +31,11 @@ import frc.robot.commands.groups.autonomous.Default;
 public class RobotContainer {
 
   Drivetrain drivetrain = new Drivetrain();
+  Limelight limelight = new Limelight();
+  Magazine magazine = new Magazine();
+  Shooter shooter = new Shooter(); 
+  Turret turret = new Turret();
+  WheelSpinner wheelSpinner = new WheelSpinner();
 
   CspController pilot = new CspController(0);
   CspController copilot = new CspController(1);
@@ -51,6 +61,7 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    pilot.
   }
 
 
