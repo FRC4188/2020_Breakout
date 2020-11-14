@@ -21,6 +21,10 @@ import frc.robot.utils.CspController;
 import frc.robot.utils.ButtonBox;
 import frc.robot.commands.drive.ManualDrive;
 import frc.robot.commands.groups.autonomous.Default;
+import frc.robot.commands.wheel.SpinToColor;
+import frc.robot.commands.wheel.SpinWheel;
+import frc.robot.commands.wheel.SpinWheelFour;
+import frc.robot.commands.wheel.ToggleWheel;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -61,7 +65,14 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    pilot.
+    pilot.getRbButtonObj().whenPressed(new ToggleWheel(wheelSpinner));
+    pilot.getAButtonObj().whenPressed(new SpinWheel(wheelSpinner, 0.5));
+    pilot.getDpadLeftButtonObj().whenPressed(new SpinToColor(wheelSpinner, Constants.kBLUE)); 
+    pilot.getDpadRightButtonObj().whenPressed(new SpinToColor(wheelSpinner, Constants.kRED));
+    pilot.getDpadUpButtonObj().whenPressed(new SpinToColor(wheelSpinner, Constants.kGREEN));
+    pilot.getDpadDownButtonObj().whenPressed(new SpinToColor(wheelSpinner, Constants.kYELLOW));
+    pilot.getXButtonObj().whenPressed(new SpinWheelFour(wheelSpinner));  
+
   }
 
 
