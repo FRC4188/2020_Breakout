@@ -8,7 +8,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
@@ -25,6 +24,12 @@ import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorMatchResult;
 
 public class WheelSpinner extends SubsystemBase {
+  //constants
+  private static final Color kBLUE = ColorMatch.makeColor(0.0, 0.255, 0.255);
+  private static final Color kRED = ColorMatch.makeColor(0.255, 0.0, 0.0);
+  private static final Color kYELLOW = ColorMatch.makeColor(0.255, 0.255, 0.0);
+  private static final Color kGREEN = ColorMatch.makeColor(0.0, 0.255, 0.0);
+
   private Solenoid wheelSpinnerSolenoid = new Solenoid(4);
   private CANSparkMax wheelSpinnerMotor = new CANSparkMax(26, MotorType.kBrushless);
   private CANEncoder wheelSpinnerEncoder = wheelSpinnerMotor.getEncoder();
@@ -48,6 +53,10 @@ public class WheelSpinner extends SubsystemBase {
    */
   public void periodic() {
       SmartDashboard.putBoolean("Wheel Spinner Raised", isRaised());
+      SmartDashboard.putNumber("Red", detectedColor.red);
+      SmartDashboard.putNumber("Blue", detectedColor.blue);
+      SmartDashboard.putNumber("Green", detectedColor.green);
+      SmartDashboard.putNumber("Proximity", proximity);
   }
 
   /**
@@ -80,10 +89,6 @@ public class WheelSpinner extends SubsystemBase {
       return isRaised;
   }
 
-  public boolean isOnColor() {
-    return isOnColor;
-  }
-
   public double getRevolutions() {
     Color initColor = detectedColor;
 
@@ -99,30 +104,31 @@ public class WheelSpinner extends SubsystemBase {
     else wheelSpinnerMotor.set(0);
   }
 
-  public void spinToColor(Color toColor) {
-      if ((toColor == Constants.kRED && match.color == Constants.kBLUE) ||
-        (toColor == Constants.kYELLOW && match.color == Constants.kGREEN) ||
-        (toColor == Constants.kBLUE && match.color == Constants.kRED) ||
-        (toColor == Constants.kGREEN && match.color == Constants.kYELLOW)) {
+  public void spinToColor(String toColor) {
+      if ((toColor == "red" && match.color == kBLUE) ||
+        (toColor == "yellow" && match.color == kGREEN) ||
+        (toColor == "blue" && match.color == kRED) ||
+        (toColor == "green" && match.color == kYELLOW)) {
           wheelSpinnerMotor.set(wheelPID.calculate(wheelSpinnerEncoder.getPosition(), 42));
-        } else if ((toColor == Constants.kGREEN && match.color == Constants.kBLUE) ||
-        (toColor == Constants.kRED && match.color == Constants.kGREEN) ||
-        (toColor == Constants.kYELLOW && match.color == Constants.kRED) ||
-        (toColor == Constants.kBLUE && match.color == Constants.kYELLOW)) {
+        } else if ((toColor == "green" && match.color == kBLUE) ||
+        (toColor == "red" && match.color == kGREEN) ||
+        (toColor == "yellow" && match.color == kRED) ||
+        (toColor == "blue" && match.color == kYELLOW)) {
           wheelSpinnerMotor.set(wheelPID.calculate(wheelSpinnerEncoder.getPosition(), 21));
-        } else if ((toColor == Constants.kYELLOW && match.color == Constants.kBLUE) ||
-        (toColor == Constants.kBLUE && match.color == Constants.kGREEN) ||
-        (toColor == Constants.kGREEN && match.color == Constants.kRED) ||
-        (toColor == Constants.kRED && match.color == Constants.kYELLOW)) {
+        } else if ((toColor == "yellow" && match.color == kBLUE) ||
+        (toColor == "blue" && match.color == kGREEN) ||
+        (toColor == "green" && match.color == kRED) ||
+        (toColor == "red" && match.color == kYELLOW)) {
           wheelSpinnerMotor.setInverted(true); 
           wheelSpinnerMotor.set(wheelPID.calculate(wheelSpinnerEncoder.getPosition(), 21));
-        } wheelSpinnerMotor.set(0);
+          wheelSpinnerMotor.setInverted(false);
+        } wheelSpinnerMotor.set(0); 
   }
 
   public void addColors() {
-    colorMatch.addColorMatch(Constants.kBLUE);
-    colorMatch.addColorMatch(Constants.kRED);
-    colorMatch.addColorMatch(Constants.kYELLOW);
-    colorMatch.addColorMatch(Constants.kGREEN);
+    colorMatch.addColorMatch(kBLUE);
+    colorMatch.addColorMatch(kRED);
+    colorMatch.addColorMatch(kYELLOW);
+    colorMatch.addColorMatch(kGREEN);
   }
 }

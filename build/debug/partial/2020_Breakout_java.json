@@ -1,0 +1,11 @@
+[
+  {
+    "name": "2020_Breakout (in project 2020_Breakout)",
+    "file": "C:\\Users\\vyang\\2020_Breakout\\build\\libs\\2020_Breakout.jar",
+    "extensions": [
+      "C:\\Users\\vyang\\2020_Breakout\\build\\tmp\\expandedArchives\\halsim_gui-2020.3.2-windowsx86-64.zip_45369a593bb959ce657791ae7ab7334a\\windows\\x86-64\\shared\\halsim_gui.dll"
+    ],
+    "librarydir": "C:\\Users\\vyang\\2020_Breakout\\build\\tmp\\jniExtractDir",
+    "mainclass": "frc.robot.Main"
+  }
+]

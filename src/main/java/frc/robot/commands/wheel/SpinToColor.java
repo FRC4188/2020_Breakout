@@ -14,12 +14,12 @@ import edu.wpi.first.wpilibj.util.Color;
 public class SpinToColor extends CommandBase {
 
   WheelSpinner wheel;
-  Color target;
+  String target;
 
   /**
    * Creates a new SpinToColor.
    */
-  public SpinToColor(WheelSpinner wheel, Color color) {
+  public SpinToColor(WheelSpinner wheel, String color) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(wheel);
     this.wheel = wheel;
