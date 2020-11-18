@@ -92,7 +92,6 @@ public class WheelSpinner extends SubsystemBase {
   public double getRevolutions() {
     Color initColor = detectedColor;
 
-    if (detectedColor != initColor) isOnColor = false;
     if (detectedColor == initColor) halfRevolutions++;
     return halfRevolutions / 2;
   }
