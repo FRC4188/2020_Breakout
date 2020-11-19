@@ -45,8 +45,8 @@ public class WheelSpinner extends SubsystemBase {
   double IR = colorSensor.getIR();
   int proximity = colorSensor.getProximity();
   ColorMatchResult match = colorMatch.matchClosestColor(detectedColor);
-  double halfRevolutions = 0;
-  double revolutions = 0;
+  int halfRevolutions = 0;
+  int revolutions = 0;
   
   /**
    * Runs every loop.
@@ -89,7 +89,7 @@ public class WheelSpinner extends SubsystemBase {
       return isRaised;
   }
 
-  public double getRevolutions() {
+  public int getRevolutions() {
     Color initColor = detectedColor;
 
     if (detectedColor == initColor) halfRevolutions++;
@@ -99,7 +99,7 @@ public class WheelSpinner extends SubsystemBase {
   public void spinFourRevolutions() {
     revolutions = getRevolutions();
 
-    if (revolutions != 4.0) wheelSpinnerMotor.set(1);
+    if (revolutions != 4) wheelSpinnerMotor.set(1);
     else wheelSpinnerMotor.set(0);
   }
 
