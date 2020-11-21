@@ -27,7 +27,7 @@ public class WheelSpinner extends SubsystemBase {
   //constants
   private static final Color kBLUE = ColorMatch.makeColor(0.0, 0.255, 0.255);
   private static final Color kRED = ColorMatch.makeColor(0.255, 0.0, 0.0);
-  private static final Color kYELLOW = ColorMatch.makeColor(0.255, 0.255, 0.0);
+  private static final Color kYELLOW = ColorMatch.makeColor(0.335, 0.530, 0.129);
   private static final Color kGREEN = ColorMatch.makeColor(0.0, 0.255, 0.0);
   
   private static final double WHEEL_GEAR_RATIO = 10.0;
@@ -44,10 +44,12 @@ public class WheelSpinner extends SubsystemBase {
   private ColorMatch colorMatch = new ColorMatch();
 
   public boolean isRaised = true;
-  public boolean isOnColor = true;
-  Color detectedColor = colorSensor.getColor();
+  public boolean isOnColor = true
+  double red;
+  Color detectedColor;
   double IR = colorSensor.getIR();
   int proximity = colorSensor.getProximity();
+
   ColorMatchResult match = colorMatch.matchClosestColor(detectedColor);
   double halfRevolutions = 0.0;
   double revolutions = 0.0;
@@ -56,11 +58,22 @@ public class WheelSpinner extends SubsystemBase {
    * Runs every loop.
    */
   public void periodic() {
+      detectedColor = colorSensor.getColor();
       SmartDashboard.putBoolean("Wheel Spinner Raised", isRaised());
-      SmartDashboard.putNumber("Red", detectedColor.red);
-      SmartDashboard.putNumber("Blue", detectedColor.blue);
-      SmartDashboard.putNumber("Green", detectedColor.green);
-      SmartDashboard.putNumber("Proximity", proximity);
+      SmartDashboard.putNumber("Red", colorSensor.getRed());
+      SmartDashboard.putNumber("Blue", colorSensor.getBlue());
+      SmartDashboard.putNumber("Green", colorSensor.getGreen());
+      SmartDashboard.putNumber("IR", colorSensor.getIR());
+      SmartDashboard.putNumber("Proximity", colorSensor.getProximity());
+      SmartDashboard.putNumber("Revolutions", getRevolutions());
+      SmartDashboard.putString("Color", (colorSensor.getColor()).toString());
+      SmartDashboard.putNumber("Motor Position", wheelSpinnerEncoder.getPosition());
+      SmartDashboard.putNumber("dRed", detectedColor.red);
+      SmartDashboard.putNumber("dGreen", detectedColor.green);
+      SmartDashboard.putNumber("dBlue", detectedColor.blue);
+      SmartDashboard.putNumber("IR", IR);
+  
+      
   }
 
   /**
@@ -129,6 +142,8 @@ public class WheelSpinner extends SubsystemBase {
           wheelSpinnerMotor.setInverted(false);
         } wheelSpinnerMotor.set(0); 
   }
+
+  
 
   public void addColors() {
     colorMatch.addColorMatch(kBLUE);
