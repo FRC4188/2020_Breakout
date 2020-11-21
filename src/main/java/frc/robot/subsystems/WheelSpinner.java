@@ -29,6 +29,10 @@ public class WheelSpinner extends SubsystemBase {
   private static final Color kRED = ColorMatch.makeColor(0.255, 0.0, 0.0);
   private static final Color kYELLOW = ColorMatch.makeColor(0.255, 0.255, 0.0);
   private static final Color kGREEN = ColorMatch.makeColor(0.0, 0.255, 0.0);
+  
+  private static final double WHEEL_GEAR_RATIO = 10.0;
+  private static final double NEO_ENCODER_TICKS = 42.0;
+  private static final double WHEEL_ENCODER_TO_REV = NEO_ENCODER_TICKS * WHEEL_GEAR_RATIO;
 
   private Solenoid wheelSpinnerSolenoid = new Solenoid(4);
   private CANSparkMax wheelSpinnerMotor = new CANSparkMax(26, MotorType.kBrushless);
@@ -45,8 +49,8 @@ public class WheelSpinner extends SubsystemBase {
   double IR = colorSensor.getIR();
   int proximity = colorSensor.getProximity();
   ColorMatchResult match = colorMatch.matchClosestColor(detectedColor);
-  int halfRevolutions = 0;
-  int revolutions = 0;
+  double halfRevolutions = 0.0;
+  double revolutions = 0.0;
   
   /**
    * Runs every loop.
@@ -89,17 +93,17 @@ public class WheelSpinner extends SubsystemBase {
       return isRaised;
   }
 
-  public int getRevolutions() {
+  public double getRevolutions() {
     Color initColor = detectedColor;
 
-    if (detectedColor == initColor) halfRevolutions++;
+    if (match.color == initColor) halfRevolutions++;
     return halfRevolutions / 2;
   }
 
   public void spinFourRevolutions() {
     revolutions = getRevolutions();
 
-    if (revolutions != 4) wheelSpinnerMotor.set(1);
+    if (revolutions != 4.0) wheelSpinnerMotor.set(1);
     else wheelSpinnerMotor.set(0);
   }
 
@@ -108,18 +112,20 @@ public class WheelSpinner extends SubsystemBase {
         (toColor == "yellow" && match.color == kGREEN) ||
         (toColor == "blue" && match.color == kRED) ||
         (toColor == "green" && match.color == kYELLOW)) {
-          wheelSpinnerMotor.set(wheelPID.calculate(wheelSpinnerEncoder.getPosition(), 42));
+          wheelSpinnerMotor.set(wheelPID.calculate(wheelSpinnerEncoder.getPosition(), 1 * WHEEL_ENCODER_TO_REV));
         } else if ((toColor == "green" && match.color == kBLUE) ||
         (toColor == "red" && match.color == kGREEN) ||
         (toColor == "yellow" && match.color == kRED) ||
-        (toColor == "blue" && match.color == kYELLOW)) {
-          wheelSpinnerMotor.set(wheelPID.calculate(wheelSpinnerEncoder.getPosition(), 21));
+        (toColor == "blue" && match.color == kYELLOW) ||
+        (toColor == "green" && match.color == kBLUE)) {
+          wheelSpinnerMotor.set(wheelPID.calculate(wheelSpinnerEncoder.getPosition(), 0.5 * WHEEL_ENCODER_TO_REV));
         } else if ((toColor == "yellow" && match.color == kBLUE) ||
         (toColor == "blue" && match.color == kGREEN) ||
         (toColor == "green" && match.color == kRED) ||
-        (toColor == "red" && match.color == kYELLOW)) {
+        (toColor == "red" && match.color == kYELLOW) || 
+        (toColor == "yellow" && match.color == kBLUE)) {
           wheelSpinnerMotor.setInverted(true); 
-          wheelSpinnerMotor.set(wheelPID.calculate(wheelSpinnerEncoder.getPosition(), 21));
+          wheelSpinnerMotor.set(wheelPID.calculate(wheelSpinnerEncoder.getPosition(), 0.5 * WHEEL_ENCODER_TO_REV));
           wheelSpinnerMotor.setInverted(false);
         } wheelSpinnerMotor.set(0); 
   }
