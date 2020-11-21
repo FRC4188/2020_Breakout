@@ -34,8 +34,8 @@ public class WheelSpinner extends SubsystemBase {
   private static final double NEO_ENCODER_TICKS = 42.0;
   private static final double WHEEL_ENCODER_TO_REV = NEO_ENCODER_TICKS * WHEEL_GEAR_RATIO;
 
-  private Solenoid wheelSpinnerSolenoid = new Solenoid(4);
-  private CANSparkMax wheelSpinnerMotor = new CANSparkMax(26, MotorType.kBrushless);
+  //private Solenoid wheelSpinnerSolenoid = new Solenoid(4);
+  private CANSparkMax wheelSpinnerMotor = new CANSparkMax(11, MotorType.kBrushless);
   private CANEncoder wheelSpinnerEncoder = wheelSpinnerMotor.getEncoder();
   private PIDController wheelPID = new PIDController(1.0, 0.0 ,0.0);
 
@@ -73,7 +73,7 @@ public class WheelSpinner extends SubsystemBase {
   /**
    * Sets wheel spinner to raised position.
    */
-  public void raise() {
+ /*public void raise() {
       wheelSpinnerSolenoid.set(false);
       isRaised = true;
   }
@@ -81,7 +81,7 @@ public class WheelSpinner extends SubsystemBase {
   /**
    * Sets wheel spinner to lowered position.
    */
-  public void lower() {
+  /*public void lower() {
       wheelSpinnerSolenoid.set(true);
       isRaised = false;
   }

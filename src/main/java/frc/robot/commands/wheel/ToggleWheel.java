@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.wheel;
+/*package frc.robot.commands.wheel;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.WheelSpinner;
@@ -19,7 +19,7 @@ public class ToggleWheel extends CommandBase {
   * Raises wheel if it is currently lowered and vice versa.
   * @param wheel - Wheel subsystem to use.
   */
-  public ToggleWheel(WheelSpinner wheel) {
+  /*public ToggleWheel(WheelSpinner wheel) {
     addRequirements(wheel);
     this.wheel = wheel; 
   }
@@ -47,3 +47,4 @@ public class ToggleWheel extends CommandBase {
     return false;
   }
 }
+*/

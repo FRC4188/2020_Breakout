@@ -13,7 +13,7 @@ import frc.robot.commands.turret.ZeroTurret;
 public class Turret extends SubsystemBase {
 
     // device initialization
-    private final CANSparkMax turretMotor = new CANSparkMax(31, MotorType.kBrushless);
+    //private final CANSparkMax turretMotor = new CANSparkMax(31, MotorType.kBrushless);
     private final CANEncoder turretEncoder = new CANEncoder(turretMotor);
 
     // constants
