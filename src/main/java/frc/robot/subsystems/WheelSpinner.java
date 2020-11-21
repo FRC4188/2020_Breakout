@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import frc.robot.Constants;
 import frc.robot.subsystems.WheelSpinner;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorSensorV3;
@@ -108,18 +109,18 @@ public class WheelSpinner extends SubsystemBase {
         (toColor == "yellow" && match.color == kGREEN) ||
         (toColor == "blue" && match.color == kRED) ||
         (toColor == "green" && match.color == kYELLOW)) {
-          wheelSpinnerMotor.set(wheelPID.calculate(wheelSpinnerEncoder.getPosition(), 42));
+          wheelSpinnerMotor.set(wheelPID.calculate(wheelSpinnerEncoder.getPosition(), 1 * Constants.WHEEL_ENCODER_TO_REV));
         } else if ((toColor == "green" && match.color == kBLUE) ||
         (toColor == "red" && match.color == kGREEN) ||
         (toColor == "yellow" && match.color == kRED) ||
         (toColor == "blue" && match.color == kYELLOW)) {
-          wheelSpinnerMotor.set(wheelPID.calculate(wheelSpinnerEncoder.getPosition(), 21));
+          wheelSpinnerMotor.set(wheelPID.calculate(wheelSpinnerEncoder.getPosition(), 0.5 * Constants.WHEEL_ENCODER_TO_REV));
         } else if ((toColor == "yellow" && match.color == kBLUE) ||
         (toColor == "blue" && match.color == kGREEN) ||
         (toColor == "green" && match.color == kRED) ||
         (toColor == "red" && match.color == kYELLOW)) {
           wheelSpinnerMotor.setInverted(true); 
-          wheelSpinnerMotor.set(wheelPID.calculate(wheelSpinnerEncoder.getPosition(), 21));
+          wheelSpinnerMotor.set(wheelPID.calculate(wheelSpinnerEncoder.getPosition(), 0.5 * Constants.WHEEL_ENCODER_TO_REV));
           wheelSpinnerMotor.setInverted(false);
         } wheelSpinnerMotor.set(0); 
   }
