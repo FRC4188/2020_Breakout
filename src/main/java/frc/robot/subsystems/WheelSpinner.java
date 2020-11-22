@@ -25,17 +25,17 @@ import com.revrobotics.ColorMatchResult;
 
 public class WheelSpinner extends SubsystemBase {
   //constants
-  private static final Color kBLUE = ColorMatch.makeColor(0.0, 0.255, 0.255);
-  private static final Color kRED = ColorMatch.makeColor(0.255, 0.0, 0.0);
-  private static final Color kYELLOW = ColorMatch.makeColor(0.255, 0.255, 0.0);
-  private static final Color kGREEN = ColorMatch.makeColor(0.0, 0.255, 0.0);
+  private static final Color kBLUE = ColorMatch.makeColor(0.230, 0.250, 0.433);
+  private static final Color kRED = ColorMatch.makeColor(0.441, 0.139, 0.423);
+  private static final Color kYELLOW = ColorMatch.makeColor(0.575, 0.193, 0.930);
+  private static final Color kGREEN = ColorMatch.makeColor(0.198, 0.151, 0.411);
   
   private static final double WHEEL_GEAR_RATIO = 10.0;
   private static final double NEO_ENCODER_TICKS = 42.0;
   private static final double WHEEL_ENCODER_TO_REV = NEO_ENCODER_TICKS * WHEEL_GEAR_RATIO;
 
-  private Solenoid wheelSpinnerSolenoid = new Solenoid(4);
-  private CANSparkMax wheelSpinnerMotor = new CANSparkMax(26, MotorType.kBrushless);
+  //private Solenoid wheelSpinnerSolenoid = new Solenoid(4);
+  private CANSparkMax wheelSpinnerMotor = new CANSparkMax(11, MotorType.kBrushless);
   private CANEncoder wheelSpinnerEncoder = wheelSpinnerMotor.getEncoder();
   private PIDController wheelPID = new PIDController(1.0, 0.0 ,0.0);
 
@@ -44,10 +44,8 @@ public class WheelSpinner extends SubsystemBase {
   private ColorMatch colorMatch = new ColorMatch();
 
   public boolean isRaised = true;
-  public boolean isOnColor = true;
   Color detectedColor = colorSensor.getColor();
-  double IR = colorSensor.getIR();
-  int proximity = colorSensor.getProximity();
+
   ColorMatchResult match = colorMatch.matchClosestColor(detectedColor);
   double halfRevolutions = 0.0;
   double revolutions = 0.0;
@@ -56,11 +54,16 @@ public class WheelSpinner extends SubsystemBase {
    * Runs every loop.
    */
   public void periodic() {
+      detectedColor = colorSensor.getColor();
       SmartDashboard.putBoolean("Wheel Spinner Raised", isRaised());
       SmartDashboard.putNumber("Red", detectedColor.red);
       SmartDashboard.putNumber("Blue", detectedColor.blue);
       SmartDashboard.putNumber("Green", detectedColor.green);
-      SmartDashboard.putNumber("Proximity", proximity);
+      SmartDashboard.putNumber("IR", colorSensor.getIR());
+      SmartDashboard.putNumber("Proximity", colorSensor.getProximity());
+      SmartDashboard.putNumber("Revolutions", getRevolutions());
+      SmartDashboard.putNumber("Motor Position", wheelSpinnerEncoder.getPosition());
+      SmartDashboard.putString("ha", colorSensor.getColor().toString());
   }
 
   /**
@@ -73,7 +76,7 @@ public class WheelSpinner extends SubsystemBase {
   /**
    * Sets wheel spinner to raised position.
    */
-  public void raise() {
+ /*public void raise() {
       wheelSpinnerSolenoid.set(false);
       isRaised = true;
   }
@@ -81,7 +84,7 @@ public class WheelSpinner extends SubsystemBase {
   /**
    * Sets wheel spinner to lowered position.
    */
-  public void lower() {
+  /*public void lower() {
       wheelSpinnerSolenoid.set(true);
       isRaised = false;
   }
@@ -95,7 +98,7 @@ public class WheelSpinner extends SubsystemBase {
 
   public double getRevolutions() {
     Color initColor = detectedColor;
-
+    
     if (match.color == initColor) halfRevolutions++;
     return halfRevolutions / 2;
   }
@@ -129,6 +132,7 @@ public class WheelSpinner extends SubsystemBase {
           wheelSpinnerMotor.setInverted(false);
         } wheelSpinnerMotor.set(0); 
   }
+
 
   public void addColors() {
     colorMatch.addColorMatch(kBLUE);

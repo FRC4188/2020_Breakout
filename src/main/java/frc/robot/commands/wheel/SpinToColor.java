@@ -34,7 +34,7 @@ public class SpinToColor extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    wheel.spinToColor(target);
+    wheel.spinToColor(target);  
   }
 
   // Called once the command ends or is interrupted.
