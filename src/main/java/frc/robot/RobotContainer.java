@@ -66,7 +66,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     //pilot.getRbButtonObj().whenPressed(new ToggleWheel(wheelSpinner));
-    pilot.getAButtonObj().whileHeld(new SpinWheel(wheelSpinner, .25));
+    pilot.getAButtonObj().whileHeld(new SpinWheel(wheelSpinner, .1));
     pilot.getAButtonObj().whenReleased(new SpinWheel(wheelSpinner, 0));
     pilot.getDpadLeftButtonObj().whenPressed(new SpinToColor(wheelSpinner, "blue")); 
     pilot.getDpadRightButtonObj().whenPressed(new SpinToColor(wheelSpinner, "red"));

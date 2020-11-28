@@ -13,29 +13,29 @@ import edu.wpi.first.wpilibj.util.Color;
 
 public class SpinToColor extends CommandBase {
 
-  WheelSpinner wheel;
+  WheelSpinner wheelSpinner;
   String target;
 
   /**
    * Creates a new SpinToColor.
    */
-  public SpinToColor(WheelSpinner wheel, String color) {
+  public SpinToColor(WheelSpinner wheelSpinner, String color) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(wheel);
-    this.wheel = wheel;
+    addRequirements(wheelSpinner);
+    this.wheelSpinner = wheelSpinner;
     this.target = color;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    wheel.addColors();
+    //wheelSpinner.addColors();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    wheel.spinToColor(target);  
+    wheelSpinner.spinToColor(target);  
   }
 
   // Called once the command ends or is interrupted.
