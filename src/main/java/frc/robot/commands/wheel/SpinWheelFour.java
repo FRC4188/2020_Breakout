@@ -19,6 +19,7 @@ public class SpinWheelFour extends CommandBase {
   public SpinWheelFour(WheelSpinner wheelSpinner) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(wheelSpinner);
+    this.wheelSpinner = wheelSpinner;
   }
 
   // Called when the command is initially scheduled.

@@ -59,6 +59,7 @@ public class WheelSpinner extends SubsystemBase {
     addColors();
     wheelSpinnerEncoder.setPositionConversionFactor(WHEEL_ENCODER_TO_REV);
   }
+  
   /**
    * Runs every loop.
    */
@@ -164,7 +165,7 @@ public class WheelSpinner extends SubsystemBase {
    * Tells you if motor is over 40 degrees Celcius. (for Vincent purposes).
    */
   public boolean motorIsHot() {
-    return (wheelSpinnerMotor.getMotorTemperature() > 39.0);
+    return (wheelSpinnerMotor.getMotorTemperature() > 40.0);
   }
 
   /**
@@ -189,8 +190,7 @@ public class WheelSpinner extends SubsystemBase {
       (toColor == "green" && getDetectedColor() == "red") ||
       (toColor == "red" && getDetectedColor() == "yellow")) {
         testString = "spinning backward 1";
-        wheelSpinnerEncoder.setPosition(-1.0  );
-        
+        wheelSpinnerEncoder.setPosition(-1.0);
     } else wheelSpinnerMotor.set(0); 
     wheelSpinnerMotor.setInverted(false);
   }
