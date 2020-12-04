@@ -37,7 +37,6 @@ public class WheelSpinner extends SubsystemBase {
   private static final double WHEELSPINNER_kI = 0.0;
   private static final double WHEELSPINNER_kD = 0.0;
 
-  
   private static final double WHEELSPINNER_GEAR_RATIO = 10.0;
   private static final double NEO_ENCODER_TICKS = 42.0;
   private static final double WHEELSPINNER_ENCODER_TO_REV = NEO_ENCODER_TICKS * WHEELSPINNER_GEAR_RATIO;
@@ -95,6 +94,7 @@ public class WheelSpinner extends SubsystemBase {
   public void resetEncoders() {
     wheelSpinnerEncoder.setPosition(0); 
   }
+
   /**
    * Sets wheel spinner to a certain percent output.
    */
@@ -156,7 +156,7 @@ public class WheelSpinner extends SubsystemBase {
     SmartDashboard.putString("testString", testString);
     SmartDashboard.putNumber("Velocity", wheelSpinnerEncoder.getVelocity());
     SmartDashboard.putNumber("temperature", wheelSpinnerMotor.getMotorTemperature());
-    SmartDashboard.putBoolean("Motor Is Fine", !motorIsHot());
+    SmartDashboard.putBoolean("Motor Is Fine",  motorIsFine());
   }
 
   /**
@@ -192,8 +192,8 @@ public class WheelSpinner extends SubsystemBase {
   /**
    * Tells you if motor is over 40 degrees Celcius. (for Vincent purposes).
    */
-  public boolean motorIsHot() {
-    return (wheelSpinnerMotor.getMotorTemperature() > 35.0);
+  public boolean motorIsFine() {
+    return !(wheelSpinnerMotor.getMotorTemperature() > 35.0);
   }
 
   /**
@@ -227,5 +227,11 @@ public class WheelSpinner extends SubsystemBase {
         wheelSpinnerPID.setReference(-1, ControlType.kPosition);
     } else wheelSpinnerMotor.set(0); 
     wheelSpinnerMotor.setInverted(false);
+
+    if ((getDetectedColor() != toColor)) {
+      while (getDetectedColor() != toColor) {
+        wheelSpinnerMotor.set(.3);
+      }
+    }
   }
 }
