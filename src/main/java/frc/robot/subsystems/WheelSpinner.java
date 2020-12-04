@@ -15,10 +15,11 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import frc.robot.subsystems.WheelSpinner;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorSensorV3;
@@ -31,15 +32,22 @@ public class WheelSpinner extends SubsystemBase {
   private static final Color kRED = ColorMatch.makeColor(0.441, 0.420, 0.138); //tune color for competition; read first three digits after the decimal
   private static final Color kYELLOW = ColorMatch.makeColor(0.339, 0.551, 0.110); //tune color for competition; read first three digits after the decimal
   private static final Color kGREEN = ColorMatch.makeColor(0.216, 0.578, 0.206); //tune color for competition; read first three digits after the decimal
+
+  private static final double WHEELSPINNER_kP = 0.1;
+  private static final double WHEELSPINNER_kI = 0.0;
+  private static final double WHEELSPINNER_kD = 0.0;
+
   
-  private static final double WHEEL_GEAR_RATIO = 10.0;
+  private static final double WHEELSPINNER_GEAR_RATIO = 10.0;
   private static final double NEO_ENCODER_TICKS = 42.0;
-  private static final double WHEEL_ENCODER_TO_REV = NEO_ENCODER_TICKS * WHEEL_GEAR_RATIO;
+  private static final double WHEELSPINNER_ENCODER_TO_REV = NEO_ENCODER_TICKS * WHEELSPINNER_GEAR_RATIO;
 
   private Solenoid wheelSpinnerSolenoid = new Solenoid(4);
   private CANSparkMax wheelSpinnerMotor = new CANSparkMax(11, MotorType.kBrushless);
   private CANEncoder wheelSpinnerEncoder = wheelSpinnerMotor.getEncoder();
 
+  //private ProfiledPIDController wheelSpinnerPID = new ProfiledPIDController(0,0,0, new Constraints(3 * WHEELSPINNER_ENCODER_TO_REV, 3*WHEELSPINNER_ENCODER_TO_REV));
+  private CANPIDController wheelSpinnerPID = wheelSpinnerMotor.getPIDController();
   private I2C.Port i2cPort = I2C.Port.kOnboard;
   private ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   private ColorMatch colorMatch = new ColorMatch();
@@ -57,7 +65,9 @@ public class WheelSpinner extends SubsystemBase {
    */
   public WheelSpinner() {
     addColors();
-    wheelSpinnerEncoder.setPositionConversionFactor(WHEEL_ENCODER_TO_REV);
+    controllerInit();
+    resetEncoders();
+    wheelSpinnerEncoder.setPositionConversionFactor(WHEELSPINNER_ENCODER_TO_REV);
   }
   
   /**
@@ -68,6 +78,23 @@ public class WheelSpinner extends SubsystemBase {
     updateShuffleBoard();
   }
 
+  /**
+   * Configure PID values.
+   */
+  public void controllerInit() {
+    wheelSpinnerPID.setP(WHEELSPINNER_kP);
+    wheelSpinnerPID.setI(WHEELSPINNER_kI);
+    wheelSpinnerPID.setD(WHEELSPINNER_kD);
+    wheelSpinnerPID.setIZone(50.0);
+    wheelSpinnerPID.setOutputRange(-0.1, 0.1);
+  }
+
+  /**
+   * Resets encoder position to 0.
+   */
+  public void resetEncoders() {
+    wheelSpinnerEncoder.setPosition(0); 
+  }
   /**
    * Sets wheel spinner to a certain percent output.
    */
@@ -129,6 +156,7 @@ public class WheelSpinner extends SubsystemBase {
     SmartDashboard.putString("testString", testString);
     SmartDashboard.putNumber("Velocity", wheelSpinnerEncoder.getVelocity());
     SmartDashboard.putNumber("temperature", wheelSpinnerMotor.getMotorTemperature());
+    SmartDashboard.putBoolean("Motor Is Fine", !motorIsHot());
   }
 
   /**
@@ -165,7 +193,7 @@ public class WheelSpinner extends SubsystemBase {
    * Tells you if motor is over 40 degrees Celcius. (for Vincent purposes).
    */
   public boolean motorIsHot() {
-    return (wheelSpinnerMotor.getMotorTemperature() > 40.0);
+    return (wheelSpinnerMotor.getMotorTemperature() > 35.0);
   }
 
   /**
@@ -173,24 +201,30 @@ public class WheelSpinner extends SubsystemBase {
    * @param toColor Desired color to spin to.
    */
   public void spinToColor(String toColor) {
+    //blue needs yellow
+    //red green
+    //yellow reed
+    //green blue 
+    resetEncoders();
     if ((toColor == "red" && getDetectedColor() == "blue") ||
       (toColor == "yellow" && getDetectedColor() == "green") ||
       (toColor == "blue" && getDetectedColor() == "red") ||
       (toColor == "green" && getDetectedColor() == "yellow")) {
-        wheelSpinnerEncoder.setPosition(2.0);
+        wheelSpinnerPID.setReference(2, ControlType.kPosition);
+       // wheelSpinnerMotor.set(wheelSpinnerPID.calculate(wheelSpinnerEncoder.getPosition(), 840));
         testString = "spinning forward 2";
       } else if ((toColor == "green" && getDetectedColor() == "blue") ||
       (toColor == "red" && getDetectedColor() == "green") ||
       (toColor == "yellow" && getDetectedColor() == "red") ||
       (toColor == "blue" && getDetectedColor() == "yellow")) {
         testString = "spinning forward 1";
-        wheelSpinnerEncoder.setPosition(1.0);
+        wheelSpinnerPID.setReference(1, ControlType.kPosition);
       } else if ((toColor == "yellow" && getDetectedColor() == "blue") ||
       (toColor == "blue" && getDetectedColor() == "green") ||
       (toColor == "green" && getDetectedColor() == "red") ||
       (toColor == "red" && getDetectedColor() == "yellow")) {
         testString = "spinning backward 1";
-        wheelSpinnerEncoder.setPosition(-1.0);
+        wheelSpinnerPID.setReference(-1, ControlType.kPosition);
     } else wheelSpinnerMotor.set(0); 
     wheelSpinnerMotor.setInverted(false);
   }
