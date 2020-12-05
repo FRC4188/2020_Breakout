@@ -21,9 +21,9 @@ import frc.robot.utils.CspController;
 import frc.robot.utils.ButtonBox;
 import frc.robot.commands.drive.ManualDrive;
 import frc.robot.commands.groups.autonomous.Default;
+import frc.robot.commands.wheel.SpinRevolutions;
 import frc.robot.commands.wheel.SpinToColor;
 import frc.robot.commands.wheel.SpinWheel;
-import frc.robot.commands.wheel.SpinWheelFour;
 //import frc.robot.commands.wheel.ToggleWheel;
 
 /**
@@ -66,16 +66,13 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     //pilot.getRbButtonObj().whenPressed(new ToggleWheel(wheelSpinner));
-    pilot.getAButtonObj().whileHeld(new SpinWheel(wheelSpinner, .1));
-    
-    
-    
+    pilot.getAButtonObj().whileHeld(new SpinWheel(wheelSpinner, .3));
     pilot.getAButtonObj().whenReleased(new SpinWheel(wheelSpinner, 0));
     pilot.getDpadLeftButtonObj().whenPressed(new SpinToColor(wheelSpinner, "blue")); 
     pilot.getDpadRightButtonObj().whenPressed(new SpinToColor(wheelSpinner, "red"));
     pilot.getDpadUpButtonObj().whenPressed(new SpinToColor(wheelSpinner, "green"));
     pilot.getDpadDownButtonObj().whenPressed(new SpinToColor(wheelSpinner, "yellow"));
-    pilot.getXButtonObj().whenPressed(new SpinWheelFour(wheelSpinner));  
+    pilot.getXButtonObj().whenPressed(new SpinRevolutions(wheelSpinner, 3.0));  
 
   }
 

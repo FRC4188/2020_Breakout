@@ -32,12 +32,8 @@ public class WheelSpinner extends SubsystemBase {
   private static final Color kBLUE = ColorMatch.makeColor(0.204, 0.468, 0.328); //tune color for competition; read first three digits after the decimal
   private static final Color kRED = ColorMatch.makeColor(0.451, 0.415, 0.132); //tune color for competition; read first three digits after the decimal
   private static final Color kYELLOW = ColorMatch.makeColor(0.339, 0.552, 0.108); //tune color for competition; read first three digits after the decimal
-  private static final Color kGREEN = ColorMatch.makeColor(0.211, 0.582, 0.206); //tune color for competition; read first three digits after the decimal
-
-  private static final double WHEELSPINNER_kP = 0.05;
-  private static final double WHEELSPINNER_kI = 0.0;
-  private static final double WHEELSPINNER_kD = 0.0;
-
+  private static final Color kGREEN = ColorMatch.makeColor(0.214, 0.578, 0.206); //tune color for competition; read first three digits after the decimal
+  
   private static final double WHEELSPINNER_GEAR_RATIO = 10.0;
   private static final double NEO_ENCODER_TICKS = 42.0;
   private static final double WHEELSPINNER_ENCODER_TO_REV = NEO_ENCODER_TICKS * WHEELSPINNER_GEAR_RATIO;
@@ -47,7 +43,7 @@ public class WheelSpinner extends SubsystemBase {
   private CANEncoder wheelSpinnerEncoder = wheelSpinnerMotor.getEncoder();
 
   //private ProfiledPIDController wheelSpinnerPID = new ProfiledPIDController(0,0,0, new Constraints(3 * WHEELSPINNER_ENCODER_TO_REV, 3*WHEELSPINNER_ENCODER_TO_REV));
-  private CANPIDController wheelSpinnerPID = wheelSpinnerMotor.getPIDController();
+  
   private I2C.Port i2cPort = I2C.Port.kOnboard;
   private ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   private ColorMatch colorMatch = new ColorMatch();
@@ -56,7 +52,7 @@ public class WheelSpinner extends SubsystemBase {
   Color detectedColor = colorSensor.getColor();
 
   ColorMatchResult match = colorMatch.matchClosestColor(detectedColor);
-  double eighthRevolutions = 0.0;
+  double eighthRevolutions =- 1;
   double revolutions = 0.0;
   String lastColor;
   
@@ -65,9 +61,7 @@ public class WheelSpinner extends SubsystemBase {
    */
   public WheelSpinner() {
     addColors();
-    controllerInit();
     resetEncoders();
-    wheelSpinnerEncoder.setPositionConversionFactor(WHEELSPINNER_ENCODER_TO_REV);
     wheelSpinnerMotor.setOpenLoopRampRate(1);
     wheelSpinnerMotor.setIdleMode(IdleMode.kBrake);
   }
@@ -78,17 +72,6 @@ public class WheelSpinner extends SubsystemBase {
   public void periodic() {
     getDetectedColor();
     updateShuffleBoard();
-  }
-
-  /**
-   * Configure PID values.
-   */
-  public void controllerInit() {
-    wheelSpinnerPID.setP(WHEELSPINNER_kP);
-    wheelSpinnerPID.setI(WHEELSPINNER_kI);
-    wheelSpinnerPID.setD(WHEELSPINNER_kD);
-    wheelSpinnerPID.setIZone(50.0);
-    wheelSpinnerPID.setOutputRange(-0.1, 0.1);
   }
 
   /**
@@ -153,14 +136,13 @@ public class WheelSpinner extends SubsystemBase {
     SmartDashboard.putNumber("Red", detectedColor.red);
     SmartDashboard.putNumber("Blue", detectedColor.blue);
     SmartDashboard.putNumber("Green", detectedColor.green);
-    SmartDashboard.putNumber("IR", colorSensor.getIR());
     SmartDashboard.putNumber("Proximity", colorSensor.getProximity());
     SmartDashboard.putNumber("Revolutions", getRevolutions());
     SmartDashboard.putNumber("Motor Position", wheelSpinnerEncoder.getPosition());
     SmartDashboard.putString("Color String", getDetectedColor());
-    SmartDashboard.putNumber("Velocity", wheelSpinnerEncoder.getVelocity());
     SmartDashboard.putNumber("temperature", wheelSpinnerMotor.getMotorTemperature());
     SmartDashboard.putBoolean("Motor Is Fine",  motorIsFine());
+    SmartDashboard.putNumber("Eighth Revolutions", eighthRevolutions);
   }
 
   /**
@@ -173,25 +155,35 @@ public class WheelSpinner extends SubsystemBase {
     colorMatch.addColorMatch(kGREEN);
   }
 
-
+  /**
+   * Resets the revolution number.
+   */
+  public void resetRevolutions() {
+    eighthRevolutions = 0.0; 
+    revolutions = 0.0; 
+  }
+  
   /**
    * Returns the number of revolutions.
    */
   public double getRevolutions() {
     String initColor = getDetectedColor();
+    double totalRevolutions = ((eighthRevolutions) / 8); 
     
-    if (lastColor != initColor) eighthRevolutions++;
+    if (lastColor != initColor && lastColor != "unknown") eighthRevolutions++;
     lastColor = initColor;
-    return (eighthRevolutions - 1) / 16;
+
+    if (totalRevolutions < 0) return 0;
+    return totalRevolutions;
   }
 
   /**
    * Spins color wheel four times.
    */
-  public void spinFourRevolutions() {
-    revolutions = getRevolutions();
+  public void spinRevolutions(double times) {
+    revolutions = getRevolutions() + 0.127;
 
-    if (revolutions < 3.75) wheelSpinnerMotor.set(.3);
+    if (revolutions <= times) wheelSpinnerMotor.set(.2);
     else wheelSpinnerMotor.set(0);
   }
 
@@ -199,7 +191,7 @@ public class WheelSpinner extends SubsystemBase {
    * Tells you if motor is over 40 degrees Celcius. (for Vincent purposes).
    */
   public boolean motorIsFine() {
-    return !(wheelSpinnerMotor.getMotorTemperature() > 35.0);
+    return !(wheelSpinnerMotor.getMotorTemperature() > 45.0);
   }
 
   /**
@@ -231,7 +223,7 @@ public class WheelSpinner extends SubsystemBase {
         wheelSpinnerPID.setReference(-1, ControlType.kPosition);
     } else wheelSpinnerMotor.set(0); 
     wheelSpinnerMotor.setInverted(false);*/
-
+    
     if (getDetectedColor() != toColor) {
       wheelSpinnerMotor.set(.15);
     } else wheelSpinnerMotor.set(0);

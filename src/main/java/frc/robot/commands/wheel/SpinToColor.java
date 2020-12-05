@@ -29,7 +29,6 @@ public class SpinToColor extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //wheelSpinner.resetEncoders();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -41,6 +40,7 @@ public class SpinToColor extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    wheelSpinner.resetRevolutions();
   }
 
   // Returns true when the command should end.
