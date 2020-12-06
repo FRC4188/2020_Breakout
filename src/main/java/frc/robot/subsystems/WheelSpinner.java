@@ -54,6 +54,7 @@ public class WheelSpinner extends SubsystemBase {
   ColorMatchResult match = colorMatch.matchClosestColor(detectedColor);
   double eighthRevolutions =- 1;
   double revolutions = 0.0;
+  double totalRevolutions = 0.0 ;
   String lastColor;
   
   /**
@@ -112,19 +113,33 @@ public class WheelSpinner extends SubsystemBase {
   }
 
   /** 
-   * Returns the color the sensor detects if the confidence is greater or equal to 99.
+   * Returns the color the sensor detects if the confidence is greater or equal to 98.
    */
   public String getDetectedColor() {
-    String colorString = "unknown";
+    String dColorString = "unknown";
     ColorMatchResult match = colorMatch.matchClosestColor(detectedColor);
+
     if (match.confidence >= 0.98) {
-    if (match.color == kBLUE) colorString = "blue";
-    else if (match.color == kRED) colorString = "red";
-    else if (match.color == kGREEN) colorString = "green";
-    else if (match.color == kYELLOW) colorString = "yellow";
+      if (match.color == kBLUE) dColorString = "blue";
+      else if (match.color == kRED) dColorString = "red";
+      else if (match.color == kGREEN) dColorString = "green";
+      else if (match.color == kYELLOW) dColorString = "yellow";
     }
     SmartDashboard.putNumber("Confidence", match.confidence);
-      return colorString;
+      return dColorString;
+  }
+
+  /**
+   * Returns the color the control panel sensor detects. 
+   */
+  public String getSensorColor() {
+    String sColorString = "unkown";
+
+    if (getDetectedColor() == "blue") sColorString = "red";
+    else if (getDetectedColor() == "yellow") sColorString = "green";
+    else if (getDetectedColor() == "red") sColorString = "blue";
+    else if (getDetectedColor() == "green") sColorString = "yellow";
+    return sColorString;
   }
 
   /**
@@ -136,7 +151,6 @@ public class WheelSpinner extends SubsystemBase {
     SmartDashboard.putNumber("Red", detectedColor.red);
     SmartDashboard.putNumber("Blue", detectedColor.blue);
     SmartDashboard.putNumber("Green", detectedColor.green);
-    SmartDashboard.putNumber("Proximity", colorSensor.getProximity());
     SmartDashboard.putNumber("Revolutions", getRevolutions());
     SmartDashboard.putNumber("Motor Position", wheelSpinnerEncoder.getPosition());
     SmartDashboard.putString("Color String", getDetectedColor());
@@ -160,7 +174,7 @@ public class WheelSpinner extends SubsystemBase {
    */
   public void resetRevolutions() {
     eighthRevolutions = 0.0; 
-    revolutions = 0.0; 
+    totalRevolutions = 0.0;
   }
   
   /**
@@ -168,7 +182,7 @@ public class WheelSpinner extends SubsystemBase {
    */
   public double getRevolutions() {
     String initColor = getDetectedColor();
-    double totalRevolutions = ((eighthRevolutions) / 8); 
+    totalRevolutions = ((eighthRevolutions) / 8); 
     
     if (lastColor != initColor && lastColor != "unknown") eighthRevolutions++;
     lastColor = initColor;
@@ -178,7 +192,7 @@ public class WheelSpinner extends SubsystemBase {
   }
 
   /**
-   * Spins color wheel four times.
+   * Spins color wheel numer of times.
    */
   public void spinRevolutions(double times) {
     revolutions = getRevolutions() + 0.127;
@@ -196,35 +210,10 @@ public class WheelSpinner extends SubsystemBase {
 
   /**
    * Spins to a destination color based on the input color. 
-   * @param toColor Desired color to spin to.
+   * @param toColor Desired color to spin to as detected by the control panel sensor.
    */
   public void spinToColor(String toColor) {
-    //blue needs yellow
-    //red green
-    //yellow reed
-    //green blue 
-   /* if ((toColor == "red" && getDetectedColor() == "blue") ||
-      (toColor == "yellow" && getDetectedColor() == "green") ||
-      (toColor == "blue" && getDetectedColor() == "red") ||
-      (toColor == "green" && getDetectedColor() == "yellow")) {
-        wheelSpinnerPID.setReference(2, ControlType.kPosition);
-        testString = "spinning forward 2";
-      } else if ((toColor == "green" && getDetectedColor() == "blue") ||
-      (toColor == "red" && getDetectedColor() == "green") ||
-      (toColor == "yellow" && getDetectedColor() == "red") ||
-      (toColor == "blue" && getDetectedColor() == "yellow")) {
-        testString = "spinning forward 1";
-        wheelSpinnerPID.setReference(1, ControlType.kPosition);
-      } else if ((toColor == "yellow" && getDetectedColor() == "blue") ||
-      (toColor == "blue" && getDetectedColor() == "green") ||
-      (toColor == "green" && getDetectedColor() == "red") ||
-      (toColor == "red" && getDetectedColor() == "yellow")) {
-        testString = "spinning backward 1";
-        wheelSpinnerPID.setReference(-1, ControlType.kPosition);
-    } else wheelSpinnerMotor.set(0); 
-    wheelSpinnerMotor.setInverted(false);*/
-    
-    if (getDetectedColor() != toColor) {
+    if (getSensorColor() != toColor) {
       wheelSpinnerMotor.set(.15);
     } else wheelSpinnerMotor.set(0);
   }

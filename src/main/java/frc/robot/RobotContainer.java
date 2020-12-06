@@ -72,10 +72,9 @@ public class RobotContainer {
     pilot.getDpadRightButtonObj().whenPressed(new SpinToColor(wheelSpinner, "red"));
     pilot.getDpadUpButtonObj().whenPressed(new SpinToColor(wheelSpinner, "green"));
     pilot.getDpadDownButtonObj().whenPressed(new SpinToColor(wheelSpinner, "yellow"));
-    pilot.getXButtonObj().whenPressed(new SpinRevolutions(wheelSpinner, 3.0));  
+    pilot.getXButtonObj().whenPressed(new SpinRevolutions(wheelSpinner, 4.0));  
 
   }
-
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
